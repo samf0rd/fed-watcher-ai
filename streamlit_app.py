@@ -60,23 +60,31 @@ def get_hawk_dove_score(text_context):
     SCORE: [number]
     REASON: [One sentence explanation]
     """
-    
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {'role': 'system', 'content': system_prompt},
-            {'role': 'user', 'content': f"Analyze this text and give a score:\n\n{text_context[:10000]}"} 
-        ],
-        temperature=0
-    )
-    
-    content = response.choices[0].message.content
-    
-    match = re.search(r'SCORE:\s*(\d+)', content)
-    score = int(match.group(1)) if match else 50
-    reason = content.split("REASON:")[-1].strip() if "REASON:" in content else content
-    
-    return score, reason
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {'role': 'system', 'content': system_prompt},
+                {'role': 'user', 'content': f"Analyze this text and give a score:\n\n{text_context[:10000]}"} 
+            ],
+            temperature=0
+        )
+        content = response.choices[0].message.content
+        
+        # ... (rest of your regex logic) ...
+        match = re.search(r'SCORE:\s*(\d+)', content)
+        score = int(match.group(1)) if match else 50
+        reason = content.split("REASON:")[-1].strip() if "REASON:" in content else content
+        return score, reason
+
+    except openai.RateLimitError:
+        st.error("🚨 OpenAI Billing Error: You have run out of credits. Please add funds at platform.openai.com.")
+        return 50, "Error: Insufficient Funds"
+        
+    except Exception as e:
+        st.error(f"🚨 An error occurred: {e}")
+        return 50, "Error: Unknown"
 
 def make_gauge_chart(score):
     """Creates the gauge chart (Same as before)."""

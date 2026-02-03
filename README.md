@@ -1,50 +1,77 @@
-# 🦅 Fed Watcher AI: Local RAG for Monetary Policy Analysis
+# 🦅 Fed Watcher AI: Hybrid RAG for Monetary Policy Analysis
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![Stack](https://img.shields.io/badge/Tech-Llama3%20%7C%20Streamlit%20%7C%20ChromaDB-green)
-![Status](https://img.shields.io/badge/Status-Prototype%20Complete-success)
+![Stack](https://img.shields.io/badge/Hybrid-Llama3%20(Local)%20%7C%20OpenAI%20(Cloud)-purple)
+![Deployment](https://img.shields.io/badge/Deployment-Streamlit%20Cloud-FF4B4B)
+
+### 🔴 Live Demo
+**Click here to use the Cloud Version:** [Fed Watcher Pro (Streamlit Cloud)](https://fed-watcher-ai.streamlit.app/)  
+*(Powered by GPT-4o-mini & ChromaDB)*
+
+---
 
 ### 📊 Project Overview
-Fed Watcher is a **locally-hosted GenAI dashboard** designed to assist quantitative analysts and macro researchers. It ingests Federal Reserve FOMC minutes and uses **Retrieval-Augmented Generation (RAG)** to perform sentiment analysis ("Hawkish" vs. "Dovish") and answer specific policy questions with citation-backed accuracy.
+Fed Watcher is a **Hybrid GenAI dashboard** designed to assist quantitative analysts and macro researchers. It ingests Federal Reserve FOMC minutes and uses **Retrieval-Augmented Generation (RAG)** to perform sentiment analysis ("Hawkish" vs. "Dovish") and answer specific policy questions with citation-backed accuracy.
 
-Unlike cloud-based solutions, this architecture ensures **100% data privacy** by running the LLM (Llama 3.1) entirely on local hardware (AMD Radeon RX 6700 XT).
+### 🏗️ Hybrid Architecture (The "Engineer's Choice")
+This project implements a unique **Dual-Backend** strategy to balance privacy, cost, and accessibility:
 
-### 📺 Demo
-![Demo GIF](assets/demo.gif)
-*(If the GIF doesn't load, please check the /assets folder)*
+| Feature | 🏠 **Local Mode** | ☁️ **Cloud Mode** |
+| :--- | :--- | :--- |
+| **Use Case** | R&D, Privacy-First Analysis | Public Demo, Mobile Access |
+| **LLM Backend** | **Ollama (Llama 3.1 8B)** | **OpenAI (GPT-4o-mini)** |
+| **Hardware** | Runs on AMD Radeon RX 6700 XT | Serverless (Streamlit Cloud) |
+| **Cost** | $0.00 (Local Compute) | ~$0.0006 per chat |
+| **Privacy** | 100% Offline / Air-gapped | SOC 2 Compliant API |
 
 ### 🚀 Key Features
 * **Automated Scraper:** Custom Python script to fetch historical FOMC minutes (2020-Present) directly from the Federal Reserve archives.
 * **Vector Search Engine:** Uses **ChromaDB** to store semantic embeddings of financial texts, allowing for context-aware retrieval.
 * **Hawkish/Dovish Gauge:** A custom "Sentiment Speedometer" built with **Plotly** that visualizes the aggregate policy stance of any selected meeting.
-* **Local LLM Inference:** Powered by **Ollama (Llama 3.1 8B)**, optimized for consumer GPU hardware.
+* **Smart Context Retrieval:** Retrieves the top-3 most relevant document chunks before generating an answer to prevent hallucinations.
 
-### 🛠️ Technical Architecture
+### 🛠️ Technical Stack
 * **Frontend:** Streamlit
-* **LLM Backend:** Ollama (Llama 3.1)
-* **Embedding Model:** Nomic-Embed-Text
 * **Vector Database:** ChromaDB (Persistent Storage)
+* **Local Inference:** Ollama + Llama 3.1
+* **Cloud Inference:** OpenAI API (GPT-4o-mini)
 * **Visualization:** Plotly Graph Objects
 
-### 💻 How to Run Locally
+---
 
-**Prerequisites:**
-1.  Install [Ollama](https://ollama.com).
-2.  Pull the required models:
+### 💻 How to Run
+
+#### Option A: Run Locally (Free & Private)
+*Requires [Ollama](https://ollama.com) installed.*
+
+1.  **Clone the repo:**
     ```bash
-    ollama pull llama3.1
-    ollama pull nomic-embed-text
+    git clone [https://github.com/samf0rd/fed-watcher-ai.git](https://github.com/samf0rd/fed-watcher-ai.git)
+    cd fed-watcher-ai
+    ```
+2.  **Install Dependencies:**
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # (Windows: venv\Scripts\activate)
+    pip install -r requirements.txt
+    ```
+3.  **Run with Ollama:**
+    ```bash
+    streamlit run app_local_ollama.py
     ```
 
-**Installation:**
-```bash
-# 1. Clone the repo
-git clone [https://github.com/samf0rd/fed-watcher-ai.git](https://github.com/samf0rd/fed-watcher-ai.git)
-cd fed-watcher-ai
+#### Option B: Run with OpenAI (Cloud Ready)
+*Requires an OpenAI API Key.*
 
-# 2. Create Virtual Environment
-python -m venv venv
-source venv/bin/activate  # (On Windows: venv\Scripts\activate)
+1.  **Set your Key:**
+    Create a `.streamlit/secrets.toml` file (or set it in your environment variables):
+    ```toml
+    OPENAI_API_KEY = "sk-..."
+    ```
+2.  **Run the Cloud App:**
+    ```bash
+    streamlit run streamlit_app.py
+    ```
 
-# 3. Install Dependencies
-pip install -r requirements.txt
+---
+*Project developed by Samuel Garcia.*
