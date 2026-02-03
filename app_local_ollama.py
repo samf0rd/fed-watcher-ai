@@ -1,3 +1,5 @@
+# RUN THIS LOCALLY: streamlit run app_local_ollama.py
+
 import streamlit as st
 import ollama
 import chromadb
