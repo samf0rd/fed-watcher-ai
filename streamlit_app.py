@@ -18,12 +18,19 @@ if 'linux' in sys.platform:
 st.set_page_config(page_title="Fed Watcher Pro", page_icon="🦅", layout="wide")
 
 # --- API SETUP ---
-# We get the API key from Streamlit Secrets (secure cloud storage)
-# Locally, you can make a .streamlit/secrets.toml file
-api_key = st.secrets.get("OPENAI_API_KEY")
+# 1. Try getting it from the Environment Variable (Docker / AWS) FIRST
+api_key = os.getenv("OPENAI_API_KEY")
 
+# 2. If not found, look in Streamlit Secrets (Streamlit Cloud)
 if not api_key:
-    st.error("OpenAI API Key is missing! Please set it in Streamlit Secrets.")
+    try:
+        api_key = st.secrets["OPENAI_API_KEY"]
+    except Exception:
+        pass
+
+# 3. If both fail, stop the app
+if not api_key:
+    st.error("OpenAI API Key is missing! Please set it in env vars or secrets.toml.")
     st.stop()
 
 client = openai.OpenAI(api_key=api_key)
